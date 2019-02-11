@@ -78,9 +78,11 @@ proc request*(client:var AwsClient,params:Table):Future[AsyncResponse]=
      var
         bucket = if params.hasKey("bucket"): params["bucket"] else: ""
      if client.endpoint.port.len > 0 and client.endpoint.port != "80":
-        url = ("$1://$2:$3/" % [client.endpoint.scheme,client.endpoint.hostname,client.endpoint.port])&bucket&path
+        url = ("$1://$2:$3/" % [client.endpoint.scheme,client.endpoint.hostname,client.endpoint.port])
      else:
-        url = ("$1://$2/$3" % [client.endpoint.scheme,client.endpoint.hostname])& bucket&path
+        url = ("$1://$2/" % [client.endpoint.scheme,client.endpoint.hostname])
+     if bucket != "": url = url & bucket
+     if path != "": url = url & "/" & path
   let
      req:AwsRequest = (action: action, url: url, payload: payload)
   echo url
